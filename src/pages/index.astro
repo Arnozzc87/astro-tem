@@ -1,80 +1,162 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import { Image } from 'astro:assets'
 import siteConfig from '@/site-config'
+import AuroraHero from '@/components/AuroraHero.vue'
+import StatsGrid from '@/components/ui/StatsGrid.astro'
+
+interface NewsItem {
+  title: string
+  date: string
+  category: string
+  link: string
+}
+
+const news: NewsItem[] = [
+  {
+    title: '生命学院孙前文实验室揭示一类独立于转录激活与转录沉默的全新染色质状态',
+    date: '2024-04-02',
+    category: '科研进展',
+    link: '/news/1',
+  },
+  {
+    title: '精仪系团队合作实现采集率1.79GHz的绝对距离测量',
+    date: '2024-04-01',
+    category: '科研进展',
+    link: '/news/2',
+  },
+  {
+    title: '车辆学院李骏团队在自动驾驶舒适性研究方面取得新进展',
+    date: '2024-03-31',
+    category: '科研进展',
+    link: '/news/3',
+  },
+]
+
+const stats = [
+  { number: '80%', description: '10年来毕业生重点单位就业比例超' },
+  { number: '357', description: '累计牵头获国家科技奖"三大奖"' },
+  { number: '14,606', description: '5年来获国内外发明专利授权' },
+  { number: '20', description: '全国（国家）重点实验室' },
+]
+
+const events = [
+  {
+    title: '清华三农论坛2025 | 深化农村改革：探索乡村全面振兴新路径',
+    date: '2025年1月11日 9:00',
+    location: '清华大学主楼后厅/在线直播',
+    type: '论坛',
+  },
+  {
+    title: '静水流深：杜大恺艺术展',
+    date: '2025年1月18日–2025年4月6日',
+    location: '清华大学艺术博物馆一层展厅',
+    type: '展览',
+  },
+]
 ---
 
 <BaseLayout description={siteConfig.description}>
-  <article class="prose">
-    <h1 class="text-title">Vitesse theme</h1>
-    <p>Vitesse theme for Astro, supports Vue and UnoCSS.</p>
-    <p>
-      A minimal, SEO-riendly portfolio and blog theme for Astro. It's inspired by <a
-        target="_blank"
-        href="https://antfu.me">antfu.me</a
-      >.
-    </p>
-    <p>
-      <img width="640" height="360" src="/hero.jpg" alt="Hero Image" />
-    </p>
-    <p>
-      Based on first principles thinking, and you can also see from the picture
-      <sup>👆</sup>, the goal of this theme is to
-      <b>make complex things as simple as possible</b>
-      . So, the core of this theme is the content, and the other elements are just auxiliary.
-    </p>
-    <p>Here are the features you don't need to worry about:</p>
-    <ul>
-      <li>100 / 100 Lighthouse performance</li>
-      <li>Responsive</li>
-      <li>SEO-friendly</li>
-      <li>Light / Dark Theme</li>
-      <li>Markdown support</li>
-      <li>
-        <a target="_blank" href="https://mdxjs.com/">MDX</a>
-        (components in your markdown) support
-      </li>
-      <li>
-        <a target="_blank" href="https://vuejs.org/">Vue</a>
-        SFC component support
-      </li>
-      <li>Auto generated sitemap and RSS Feed</li>
-      <li>
-        <a target="_blank" href="https://vueuse.org/">VueUse</a>
-        &
-        <a target="_blank" href="https://lodash.com/">Lodash</a>
-        support
-      </li>
-    </ul>
-    <p>
-      By the way, this theme use the <a target="_blank" href="https://unocss.dev/">UnoCSS</a> for style, it's fast.
-    </p>
-    <p>
-      Visit it
-      <a target="_blank" href="https://github.com/kevinwong865/astro-theme-vitesse"> on GitHub </a>
-      to fork the repository, read the docs or one-click deploy on Netlify.
-    </p>
-    <p>
-      If you like Vitesse theme for Astro, please
-      <a target="_blank" href="https://github.com/kevinwong865"> click follow </a>
-      for me.
-    </p>
-    <hr class="hr-line" />
-    <p>Find me on</p>
-    <p class="flex gap-x-4 gap-y-2 flex-wrap">
-      {
-        siteConfig.socialLinks.map((link) => (
-          <a aria-label={link.text} href={link.href} target="_blank" class="prose-link">
-            <i class:list={[link.icon]} />
-            {link.text}
-          </a>
-        ))
-      }
-    </p>
-    <p>
-      If you have any questions, please email me at
-      <a prose-link aria-label={siteConfig.email} href={`mailto:${siteConfig.email}`}>
-        {siteConfig.email}
-      </a>.
-    </p>
-  </article>
+  <AuroraHero client:load />
+
+  <!-- 数据统计 -->
+  <StatsGrid />
+
+  <!-- 新闻动态 -->
+  <section class="py-12 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">新闻动态</h2>
+        <a href="/news" class="text-purple-600 hover:text-purple-700 dark:text-purple-400 text-sm font-medium">
+          更多新闻 <span class="ml-1">></span>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {
+          news.map((item) => (
+            <a href={item.link} class="group">
+              <article class="bg-gray-50 dark:bg-gray-800 p-6 rounded hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                  <span class="text-purple-600 dark:text-purple-400">{item.category}</span>
+                  <span class="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+                  <span>{item.date}</span>
+                </div>
+                <h3 class="text-base font-medium text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
+                  {item.title}
+                </h3>
+              </article>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 近期活动 -->
+  <section class="py-12 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">近期活动</h2>
+        <a href="/events" class="text-purple-600 hover:text-purple-700 dark:text-purple-400 text-sm font-medium">
+          全部活动 <span class="ml-1">></span>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {
+          events.map((event) => (
+            <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+              <div class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300 mb-3">
+                {event.type}
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-3 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                {event.title}
+              </h3>
+              <div class="text-sm text-gray-500 dark:text-gray-400 space-y-1">
+                <p class="flex items-center gap-2">
+                  <i class="fas fa-calendar-alt text-gray-400" />
+                  {event.date}
+                </p>
+                <p class="flex items-center gap-2">
+                  <i class="fas fa-map-marker-alt text-gray-400" />
+                  {event.location}
+                </p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 社交媒体动态 -->
+  <section class="py-12 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">关注我们</h2>
+        <div class="flex gap-4">
+          {
+            siteConfig.socialLinks.map((link) => (
+              <a
+                href={link.href}
+                target="_blank"
+                class="text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 transition-colors"
+                aria-label={link.text}
+              >
+                <i class:list={[link.icon, 'text-xl']} />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

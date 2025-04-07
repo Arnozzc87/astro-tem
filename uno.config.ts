@@ -9,6 +9,30 @@ import {
   transformerVariantGroup,
 } from 'unocss'
 
+// 添加颜色变量
+function addVariablesForColors(colors: Record<string, any>) {
+  const newVars: Record<string, string> = {}
+
+  // 添加基本颜色变量
+  newVars['--white'] = '#ffffff'
+  newVars['--black'] = '#000000'
+  newVars['--transparent'] = 'transparent'
+
+  // 添加Tailwind颜色变量
+  Object.entries(colors).forEach(([key, value]) => {
+    if (typeof value === 'object' && value !== null) {
+      Object.entries(value).forEach(([shade, color]) => {
+        newVars[`--${key}-${shade}`] = color as string
+      })
+    }
+    else {
+      newVars[`--${key}`] = value as string
+    }
+  })
+
+  return newVars
+}
+
 export default defineConfig({
   shortcuts: [
     {
@@ -59,5 +83,75 @@ export default defineConfig({
     'i-simple-icons-sinaweibo',
     'i-ri-github-line',
     'i-ri-twitter-x-line',
+  ],
+  rules: [
+    ['font-amita', { 'font-family': '"Amitabold", sans-serif' }],
+  ],
+  theme: {
+    extend: {
+      animation: {
+        aurora: 'aurora 60s linear infinite',
+      },
+      keyframes: {
+        aurora: {
+          '0%': {
+            backgroundPosition: '50% 50%, 50% 50%',
+          },
+          '50%': {
+            backgroundPosition: '150% 50%, 150% 50%',
+          },
+          '100%': {
+            backgroundPosition: '250% 50%, 250% 50%',
+          },
+        },
+      },
+      width: {
+        '1650px': '1650px',
+      },
+      minWidth: {
+        '359px': '359px',
+      },
+      height: {
+        '125px': '125px',
+      },
+      fontSize: {
+        '72px': '72px',
+        '50px': '50px',
+        '17px': '17px',
+      },
+      lineHeight: {
+        '24px': '24px',
+      },
+    },
+  },
+  preflights: [
+    {
+      getCSS: () => {
+        const colorVars = addVariablesForColors({
+          white: '#ffffff',
+          black: '#000000',
+          transparent: 'transparent',
+          blue: {
+            300: '#93c5fd',
+            400: '#60a5fa',
+            500: '#3b82f6',
+          },
+          indigo: {
+            300: '#a5b4fc',
+          },
+          violet: {
+            200: '#ddd6fe',
+          },
+        })
+
+        return `
+          :root {
+            ${Object.entries(colorVars)
+              .map(([key, value]) => `${key}: ${value};`)
+              .join('\n')}
+          }
+        `
+      },
+    },
   ],
 })

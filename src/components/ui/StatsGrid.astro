@@ -1,0 +1,133 @@
+---
+interface Props {
+  class?: string
+}
+
+const stats = [
+  [
+    { number: '80%', description: '10年来毕业生重点单位就业比例超' },
+    { number: '10.5%', description: '10年来毕业生出国（境）深造比例' },
+    { number: '16.5%', description: '2024年西部和东北地区就业人数同比增长' },
+  ],
+  [
+    { number: '357', description: '累计牵头获国家科技奖"三大奖"' },
+    { number: '11', description: '获国家最高科技奖校友' },
+    { number: '3', description: '2011年百年校庆以来获国家最高科技奖教师' },
+    { number: '16', description: '2011年百年校庆以来获国家科技奖"三大奖"一等奖' },
+  ],
+  [
+    { number: '14,606', description: '5年来获国内外发明专利授权' },
+    { number: '4', description: '国家重大科技基础设施' },
+    { number: '20', description: '全国（国家）重点实验室' },
+  ],
+]
+---
+
+<div class="stats-wrapper relative w-full overflow-hidden">
+  <div
+    class="relative z-1 py-20 text-center bg-[url('/img890.jpg')] bg-bottom bg-no-repeat min-h-[730px]"
+    style="background-size: auto 730px;"
+  >
+    <div class="relative mx-auto py-15 w-[1650px]" data-stats-list>
+      {
+        stats.map((row) => (
+          <ul class="flex justify-center items-start gap-4">
+            {row.map((stat) => (
+              <li class="flex items-start justify-end h-[125px] px-4 min-w-[359px] group">
+                <div class="stats-desc text-black font-bold text-right max-w-[200px] leading-tight whitespace-pre-wrap">
+                  {stat.description}
+                </div>
+                <div class="stats-number text-purple-700 font-amita ml-4 flex-shrink-0">{stat.number}</div>
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  @font-face {
+    font-family: 'Amitabold';
+    src: url('/fonts/Amitabold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .stats-wrapper {
+    font-size: 16px;
+  }
+
+  .stats-number {
+    font-size: 72px;
+    line-height: 1;
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.3s ease;
+  }
+
+  .group:hover .stats-number {
+    transform: translateY(-2px);
+  }
+
+  .stats-desc {
+    font-size: 17px;
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+
+  .group:hover .stats-desc {
+    opacity: 1;
+  }
+
+  @media screen and (max-width: 1700px) {
+    .stats-number {
+      font-size: 50px;
+    }
+    .stats-desc {
+      font-size: 15px;
+      max-width: 180px;
+    }
+  }
+
+  [data-stats-list]::before {
+    content: '';
+    position: absolute;
+    width: 1059px;
+    height: 77px;
+    background: url('/rdqh_line1.png') no-repeat;
+    background-size: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  [data-stats-list]::after {
+    content: '';
+    position: absolute;
+    width: 1059px;
+    height: 2px;
+    background: url('/rdqh_line2.png') no-repeat;
+    background-size: 100%;
+    bottom: 77px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .font-amita {
+    font-family: 'Amitabold', sans-serif;
+  }
+
+  ul {
+    margin: 2rem 0;
+  }
+
+  ul:not(:last-child) {
+    margin-bottom: 3rem;
+  }
+</style>

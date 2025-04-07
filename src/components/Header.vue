@@ -77,32 +77,34 @@ function toggleNavDrawer() {
 <template>
   <header
     id="header" :class="{ 'header-bg-blur': scroll > 20 }"
-    class="!fixed bg-transparent z-899 w-screen h-20 px-6 flex justify-between items-center relative"
+    class="!fixed bg-transparent z-899 w-full h-20 flex justify-center items-center relative"
   >
-    <div class="flex items-center h-full">
-      <a href="/" mr-6 aria-label="Header Logo Image">
-        <img width="32" height="32" :src="siteConfig.header.logo.src" :alt="siteConfig.header.logo.alt">
-      </a>
-      <nav class="sm:flex hidden flex-wrap gap-x-6 position-initial flex-row">
-        <a
-          v-for="link in navLinks" :key="link.text" :aria-label="`${link.text}`" :target="getLinkTarget(link.href)"
-          nav-link :href="link.href"
-        >
-          {{ link.text }}
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center w-full">
+      <div class="flex items-center h-full">
+        <a href="/" mr-6 aria-label="Header Logo Image">
+          <img width="32" height="32" :src="siteConfig.header.logo.src" :alt="siteConfig.header.logo.alt" loading="lazy">
         </a>
-      </nav>
-      <div sm:hidden h-full flex items-center @click="toggleNavDrawer()">
-        <menu i-ri-menu-2-fill />
+        <nav class="sm:flex hidden flex-wrap gap-x-6 position-initial flex-row">
+          <a
+            v-for="link in navLinks" :key="link.text" :aria-label="`${link.text}`" :target="getLinkTarget(link.href)"
+            nav-link :href="link.href"
+          >
+            {{ link.text }}
+          </a>
+        </nav>
+        <div sm:hidden h-full flex items-center @click="toggleNavDrawer()">
+          <menu i-ri-menu-2-fill />
+        </div>
       </div>
-    </div>
-    <div class="flex gap-x-6">
-      <a
-        v-for="link in socialLinks" :key="link.text" :aria-label="`${link.text}`" :class="link.icon" nav-link
-        :target="getLinkTarget(link.href)" :href="link.href"
-      />
+      <div class="flex gap-x-6">
+        <a
+          v-for="link in socialLinks" :key="link.text" :aria-label="`${link.text}`" :class="link.icon" nav-link
+          :target="getLinkTarget(link.href)" :href="link.href"
+        />
 
-      <a nav-link target="_blank" href="/rss.xml" i-ri-rss-line aria-label="RSS" />
-      <ThemeToggle />
+        <a nav-link target="_blank" href="/rss.xml" i-ri-rss-line aria-label="RSS" />
+        <ThemeToggle />
+      </div>
     </div>
   </header>
   <nav
