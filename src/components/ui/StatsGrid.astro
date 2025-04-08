@@ -3,41 +3,60 @@ interface Props {
   class?: string
 }
 
-const stats = [
+interface StatItem {
+  number: string
+  decimals: number
+  suffix?: string
+  description: string
+}
+
+const stats: StatItem[][] = [
   [
-    { number: '80%', description: '10年来毕业生重点单位就业比例超' },
-    { number: '10.5%', description: '10年来毕业生出国（境）深造比例' },
-    { number: '16.5%', description: '2024年西部和东北地区就业人数同比增长' },
+    { number: '80', decimals: 0, suffix: '%', description: '10年来毕业生重点单位\n就业比例超' },
+    { number: '10.5', decimals: 1, suffix: '%', description: '10年来毕业生\n出国（境）深造比例' },
+    { number: '16.5', decimals: 1, suffix: '%', description: '2024年西部和东北地区\n就业人数同比增长' },
   ],
   [
-    { number: '357', description: '累计牵头获国家科技奖"三大奖"' },
-    { number: '11', description: '获国家最高科技奖校友' },
-    { number: '3', description: '2011年百年校庆以来获国家最高科技奖教师' },
-    { number: '16', description: '2011年百年校庆以来获国家科技奖"三大奖"一等奖' },
+    { number: '357', decimals: 0, description: '累计牵头获国家科技奖\n"三大奖"' },
+    { number: '11', decimals: 0, description: '获国家最高科技奖\n校友' },
+    { number: '3', decimals: 0, description: '2011年百年校庆以来获\n国家最高科技奖教师' },
+    { number: '16', decimals: 0, description: '2011年百年校庆以来获国家\n科技奖"三大奖"一等奖' },
   ],
   [
-    { number: '14,606', description: '5年来获国内外发明专利授权' },
-    { number: '4', description: '国家重大科技基础设施' },
-    { number: '20', description: '全国（国家）重点实验室' },
+    { number: '14606', decimals: 0, description: '5年来获国内外\n发明专利授权' },
+    { number: '4', decimals: 0, description: '国家重大科技\n基础设施' },
+    { number: '20', decimals: 0, description: '全国（国家）\n重点实验室' },
   ],
 ]
 ---
 
 <div class="stats-wrapper relative w-full overflow-hidden">
   <div
-    class="relative z-1 py-20 text-center bg-[url('/img890.jpg')] bg-bottom bg-no-repeat min-h-[730px]"
-    style="background-size: auto 730px;"
+    class="relative z-1 py-20 text-center bg-[url('/img890.jpg')] bg-bottom bg-no-repeat min-h-[730px] bg-[length:auto_730px]"
   >
     <div class="relative mx-auto py-15 w-[1650px]" data-stats-list>
       {
         stats.map((row) => (
-          <ul class="flex justify-center items-start gap-4">
+          <ul class="flex justify-center items-start gap-4 my-4 last:mb-0">
             {row.map((stat) => (
-              <li class="flex items-start justify-end h-[125px] px-4 min-w-[359px] group">
-                <div class="stats-desc text-black font-bold text-right max-w-[200px] leading-tight whitespace-pre-wrap">
+              <li
+                class="flex items-center h-24 px-4 min-w-[280px] justify-center group"
+                data-num={stat.number}
+                data-decimals={stat.decimals}
+              >
+                <div class="text-base leading-normal text-zinc-900 font-medium text-right whitespace-pre-line">
                   {stat.description}
                 </div>
-                <div class="stats-number text-purple-700 font-amita ml-4 flex-shrink-0">{stat.number}</div>
+                <div class="relative ml-6">
+                  <div class="text-4xl md:text-5xl lg:text-6xl text-purple-700 flex-shrink-0 flex items-center font-amita absolute left-0 top-1/2 -translate-y-1/2">
+                    <span class="num-value">0</span>
+                    {stat.suffix}
+                  </div>
+                  <div class="text-4xl md:text-5xl lg:text-6xl text-purple-700 flex-shrink-0 flex items-center font-amita relative opacity-0">
+                    {stat.number}
+                    {stat.suffix}
+                  </div>
+                </div>
               </li>
             ))}
           </ul>
@@ -47,6 +66,75 @@ const stats = [
   </div>
 </div>
 
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    function formatNumber(num, decimals = 0) {
+      const parts = num.toFixed(decimals).split('.')
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      return parts.join('.')
+    }
+
+    function animateRow(row) {
+      const elements = row.querySelectorAll('[data-num]')
+      const startTime = performance.now()
+      const duration = 1500
+
+      // 重置所有数值为0
+      elements.forEach((element) => {
+        const numElement = element.querySelector('.num-value')
+        if (numElement) {
+          numElement.textContent = '0'
+        }
+      })
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime
+        const progress = Math.min(elapsed / duration, 1)
+        const easeProgress = 1 - (1 - progress) ** 3
+
+        // 同时更新该行所有数字
+        elements.forEach((element) => {
+          const num = Number.parseFloat(element.dataset.num || '0')
+          const decimals = Number.parseInt(element.dataset.decimals || '0')
+          const numElement = element.querySelector('.num-value')
+
+          if (numElement) {
+            const currentValue = easeProgress * num
+            numElement.textContent = formatNumber(currentValue, decimals)
+          }
+        })
+
+        if (progress < 1) {
+          requestAnimationFrame(update)
+        }
+      }
+
+      requestAnimationFrame(update)
+    }
+
+    // 创建 Intersection Observer
+    const rowObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // 整行一起动画
+            animateRow(entry.target)
+          }
+        })
+      },
+      {
+        threshold: 0.3,
+        rootMargin: '0px',
+      },
+    )
+
+    // 观察每一行
+    document.querySelectorAll('[data-stats-list] > ul').forEach((row) => {
+      rowObserver.observe(row)
+    })
+  })
+</script>
+
 <style>
   @font-face {
     font-family: 'Amitabold';
@@ -54,45 +142,6 @@ const stats = [
     font-weight: normal;
     font-style: normal;
     font-display: swap;
-  }
-
-  .stats-wrapper {
-    font-size: 16px;
-  }
-
-  .stats-number {
-    font-size: 72px;
-    line-height: 1;
-    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    transition: transform 0.3s ease;
-  }
-
-  .group:hover .stats-number {
-    transform: translateY(-2px);
-  }
-
-  .stats-desc {
-    font-size: 17px;
-    opacity: 0.85;
-    transition: opacity 0.3s ease;
-    word-wrap: break-word;
-    word-break: break-all;
-  }
-
-  .group:hover .stats-desc {
-    opacity: 1;
-  }
-
-  @media screen and (max-width: 1700px) {
-    .stats-number {
-      font-size: 50px;
-    }
-    .stats-desc {
-      font-size: 15px;
-      max-width: 180px;
-    }
   }
 
   [data-stats-list]::before {
@@ -119,15 +168,11 @@ const stats = [
     transform: translateX(-50%);
   }
 
-  .font-amita {
-    font-family: 'Amitabold', sans-serif;
-  }
-
   ul {
-    margin: 2rem 0;
+    margin: 1rem 0;
   }
 
   ul:not(:last-child) {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
   }
 </style>

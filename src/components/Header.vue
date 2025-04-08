@@ -80,43 +80,83 @@ function toggleNavDrawer() {
     class="!fixed bg-transparent z-899 w-full h-20 flex justify-center items-center relative"
   >
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center w-full">
-      <div class="flex items-center h-full">
-        <a href="/" mr-6 aria-label="Header Logo Image">
-          <img width="32" height="32" :src="siteConfig.header.logo.src" :alt="siteConfig.header.logo.alt" loading="lazy">
-        </a>
-        <nav class="sm:flex hidden flex-wrap gap-x-6 position-initial flex-row">
-          <a
-            v-for="link in navLinks" :key="link.text" :aria-label="`${link.text}`" :target="getLinkTarget(link.href)"
-            nav-link :href="link.href"
-          >
-            {{ link.text }}
-          </a>
-        </nav>
-        <div sm:hidden h-full flex items-center @click="toggleNavDrawer()">
-          <menu i-ri-menu-2-fill />
+      <a href="/" mr-6 aria-label="Header Logo Image">
+        <img width="32" height="32" :src="siteConfig.header.logo.src" :alt="siteConfig.header.logo.alt" loading="lazy">
+      </a>
+
+      <nav class="sm:flex hidden flex-1 justify-center">
+        <div class="flex gap-x-6 position-initial flex-row">
+          <div v-for="link in navLinks" :key="link.text" class="nav-item relative">
+            <a
+              :aria-label="`${link.text}`"
+              :target="getLinkTarget(link.href)"
+              nav-link
+              :href="link.href"
+              class="flex items-center"
+            >
+              {{ link.text }}
+              <i v-if="link.children" i-ri-arrow-down-s-line ml-1 text-sm transition-transform duration-200 />
+            </a>
+            <div v-if="link.children" class="submenu">
+              <a
+                v-for="child in link.children"
+                :key="child.text"
+                :href="child.href"
+                :target="getLinkTarget(child.href)"
+                class="submenu-item"
+              >
+                <div class="font-medium">{{ child.text }}</div>
+                <div v-if="child.description" class="text-sm opacity-80">{{ child.description }}</div>
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
+      </nav>
+
       <div class="flex gap-x-6">
         <a
-          v-for="link in socialLinks" :key="link.text" :aria-label="`${link.text}`" :class="link.icon" nav-link
-          :target="getLinkTarget(link.href)" :href="link.href"
+          v-for="link in socialLinks"
+          :key="link.text"
+          :aria-label="`${link.text}`"
+          :class="link.icon"
+          nav-link
+          :target="getLinkTarget(link.href)"
+          :href="link.href"
         />
-
         <a nav-link target="_blank" href="/rss.xml" i-ri-rss-line aria-label="RSS" />
         <ThemeToggle />
       </div>
+
+      <div sm:hidden h-full flex items-center @click="toggleNavDrawer()">
+        <menu i-ri-menu-2-fill />
+      </div>
     </div>
   </header>
-  <nav
-    class="nav-drawer sm:hidden"
-  >
+  <nav class="nav-drawer sm:hidden">
     <i i-ri-menu-2-fill />
-    <a
-      v-for="link in navLinks" :key="link.text" :aria-label="`${link.text}`" :target="getLinkTarget(link.href)"
-      nav-link :href="link.href" @click="toggleNavDrawer()"
-    >
-      {{ link.text }}
-    </a>
+    <div v-for="link in navLinks" :key="link.text" class="flex flex-col">
+      <a
+        :aria-label="`${link.text}`"
+        :target="getLinkTarget(link.href)"
+        nav-link
+        :href="link.href"
+        @click="toggleNavDrawer()"
+      >
+        {{ link.text }}
+      </a>
+      <div v-if="link.children" class="pl-4 flex flex-col gap-2 mt-2">
+        <a
+          v-for="child in link.children"
+          :key="child.text"
+          :href="child.href"
+          :target="getLinkTarget(child.href)"
+          class="text-sm opacity-80 hover:opacity-100"
+          @click="toggleNavDrawer()"
+        >
+          {{ child.text }}
+        </a>
+      </div>
+    </div>
   </nav>
   <div class="nav-drawer-mask" @click="toggleNavDrawer()" />
 </template>
@@ -148,5 +188,60 @@ function toggleNavDrawer() {
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   z-index: 998;
+}
+
+.nav-item:hover .submenu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.nav-item:hover i {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: -1rem;
+  min-width: 200px;
+  background: var(--dot-bg-color);
+  border: 1px solid var(--dot-color);
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.submenu::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 2rem;
+  width: 10px;
+  height: 10px;
+  background: var(--dot-bg-color);
+  border-left: 1px solid var(--dot-color);
+  border-top: 1px solid var(--dot-color);
+  transform: rotate(45deg);
+}
+
+.submenu-item {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.submenu-item:hover {
+  background: var(--dot-color);
 }
 </style>
